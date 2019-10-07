@@ -1,7 +1,7 @@
 {
-  "name": "challenge1",
+  "name": "challenge3",
   "version": "1.0.0",
-  "main": "challenge1.js",
+  "main": "challenge3.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
