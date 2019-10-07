@@ -4,8 +4,17 @@ var assert = require("chai").assert;
 var until = webdriver.until;
 var By = webdriver.By;
 var Key = webdriver.Key;
+var WebElement = webdriver.WebElement;
 
+/*
+const expect = require('chai').expect;
+const mochaTable = require('.');
 
+const describeTable = mochaTable.describeTable;
+const tableIt = mochaTable.tableIt;
+const entryIt = mochaTable.entryIt;
+const xentryIt = mochaTable.xentryIt;
+*/
 
 describe("challenge2 suite", function(){
     this.timeout(100000);
@@ -28,16 +37,20 @@ describe("challenge2 suite", function(){
     it("I open the copart website", function() {
         return driver.get("http://www.copart.com");
     });
-    it("It searches for exotic", function() {
-        var porsche = driver.get("https://www.copart.com/lotSearchResults/?free=true&query=Exotics");
-        console.log(porsche);
-        return porsche;
+    it("It searches for exotic", async function() {
+        return await driver.findElement(By.id('input-search')).sendKeys('Exotic' + Key.ENTER);
+
+
         //lotsearchLotmake
     });
 
     it("Goes through list and finds Porsche", async function(){
-        return driver.get("https://www.copart.com/lotSearchResults/?free=true&query=Exotics&searchCriteria=%7B%22query%22:%5B%22Exotics%22%5D,%22filter%22:%7B%22MAKE%22:%5B%22lot_make_desc:%5C%22PORSCHE%5C%22%22%5D%7D,%22watchListOnly%22:false,%22searchName%22:%22%22,%22freeFormSearch%22:true%7D");
 
+        var values = await driver.getText(webdriver.By.xpath("//*[@id=\"serverSideDataTable_wrapper\"]"));
+        //console.log(values);
+        await WebElement.getText();
+
+         //return;
     });
 
    // var el_down = document.getElementById("GFG_DOWN");
