@@ -34,24 +34,49 @@ describe("challenge2 suite", function(){
         return driver.quit();
     });
 
-    it("I open the copart website", function() {
+    it("I open the copart website", async function() {
+        //return driver.get("http://www.google.com");
         return driver.get("http://www.copart.com");
     });
     it("It searches for exotic", async function() {
-        return await driver.findElement(By.id('input-search')).sendKeys('Exotic' + Key.ENTER);
+        var element = await driver.findElement(By.id("input-search"));
+        element.sendKeys("Exotic");
+        var element2 = await driver.findElement(By.class("btn btn-lightblue marginleft15"));
+        return await element2.click();
+        //var element = await driver.findElement(By.name("q"));
+        // element.sendKeys("Exotic" + Key.ENTER);
+
+        // element.sendKeys("Exotic");
+        //return await driver.findElement(By.className("btn btn-lightblue marginleft15")).click();
+        //return await driver.findElement(By.id('input-search')).sendKeys('Exotic' + Key.ENTER);
+
+
+        //lotsearchLotmake
+    });
+    it("Checks if it user is in search exotic page", async function() {
+        return await driver.wait(until.titleIs('Exotic For Auction at Copart - Salvage Cars For Sale'), 4000);
+        /*return await driver.getTitle().then(function(title) {
+            assert.equal(title, "Exotic For Auction at Copart - Salvage Cars For Sale");
+        });*/
+        //return await driver.findElement(By.id('input-search')).sendKeys('Exotic' + Key.ENTER);
 
 
         //lotsearchLotmake
     });
 
-    it("Goes through list and finds Porsche", async function(){
+    /*it("Goes through list and finds Porsche", async function(){
+        var popular_array = await driver.findElements(webdriver.By.xpath("//*[@id=\"serverSideDataTable\"]/tbody//div"));
+        for(var i=0; i<popular_array.length; i++){
+            var print1 = await popular_array[i].getText();
+            if(assert.include(print1,"Porsche")){
+                console.log(print1);
+               // return print1;
+            }
 
-        var values = await driver.getText(webdriver.By.xpath("//*[@id=\"serverSideDataTable_wrapper\"]"));
-        //console.log(values);
-        await WebElement.getText();
 
-         //return;
-    });
+        }
+        //String Porsche =  await driver.findElement(By.cssSelector("table.serverSideDataTable")).getText();
+    });*/
 
    // var el_down = document.getElementById("GFG_DOWN");
 
