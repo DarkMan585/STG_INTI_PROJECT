@@ -5,7 +5,7 @@ var until = webdriver.until;
 var By = webdriver.By;
 var Key = webdriver.Key;
 var WebElement = webdriver.WebElement;
-
+var JavascriptExecutor = require('selenium-webdriver');
 /*
 const expect = require('chai').expect;
 const mochaTable = require('.');
@@ -31,7 +31,7 @@ describe("challenge2 suite", function(){
 
 
     after(function () {
-        return driver.quit();
+        //return driver.quit();
     });
 
     it("I open the copart website", async function() {
@@ -41,7 +41,9 @@ describe("challenge2 suite", function(){
     it("It searches for exotic", async function() {
         var element = await driver.findElement(By.id("input-search"));
         element.sendKeys("Exotic");
-        var element2 = await driver.findElement(By.class("btn btn-lightblue marginleft15"));
+        var element2 = await driver.findElement(By.xpath("//*[@id=\"search-form\"]/div/div[2]/button"));
+
+        //console.log(element2);
         return await element2.click();
         //var element = await driver.findElement(By.name("q"));
         // element.sendKeys("Exotic" + Key.ENTER);
@@ -54,7 +56,9 @@ describe("challenge2 suite", function(){
         //lotsearchLotmake
     });
     it("Checks if it user is in search exotic page", async function() {
-        return await driver.wait(until.titleIs('Exotic For Auction at Copart - Salvage Cars For Sale'), 4000);
+        var element3 = await driver.getTitle();
+        //  console.log(element3);
+        return driver.wait(until.titleIs('Exotic For Auction at Copart - Salvage Cars For Sale'), 4000);
         /*return await driver.getTitle().then(function(title) {
             assert.equal(title, "Exotic For Auction at Copart - Salvage Cars For Sale");
         });*/
@@ -63,7 +67,19 @@ describe("challenge2 suite", function(){
 
         //lotsearchLotmake
     });
+    it("Checks if it user is in search exotic page", async function() {
+      //return (WebElement)(JavascriptExecutor).executeScript("return document.evaluate('//span[@data-uname=\"lotsearchLotmake\"][text()=\"PORSCHE\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        var element = await driver.findElements(By.xpath("//span[@data-uname='lotsearchLotmake']"));
 
+        var element = await driver.findElements(By.xpath("//[text()='PORSCHE']"));
+
+        console.log(element);
+        return element.length > 0;
+        // JavascriptExecutor js = (JavascriptExecutor)webdriver;
+        //return  (String)js.executeScript("return document.evaluate('//span[@data-uname=\"lotsearchLotmake\"][text()=\"PORSCHE\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
+    });
+});
     /*it("Goes through list and finds Porsche", async function(){
         var popular_array = await driver.findElements(webdriver.By.xpath("//*[@id=\"serverSideDataTable\"]/tbody//div"));
         for(var i=0; i<popular_array.length; i++){
@@ -115,7 +131,7 @@ describe("challenge2 suite", function(){
 
 
 
-});
+
     /*it("The title is 'Auto Auction - Copart USA - Salvage Cars For Sale'", function() {
         // Since we want the title from the page, we need to manually handle the Promise
         return driver.getTitle().then(function(title) {
