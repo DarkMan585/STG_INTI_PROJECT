@@ -1,3 +1,4 @@
+
 require('chromedriver');
 var webdriver = require('selenium-webdriver');
 var assert = require("chai").assert;
@@ -11,14 +12,14 @@ describe("challenge5 suite", function(){
     this.timeout(100000);
     var driver;
     before(async function () {
-        // initializing chrome driver
-        driver = new webdriver.Builder()
-            .withCapabilities(webdriver.Capabilities.chrome())
-            .build();
+            // initializing chrome driver
+            driver = new webdriver.Builder()
+                .withCapabilities(webdriver.Capabilities.chrome())
+                .build();
             driver.manage().window().maximize();
 
 
-    }
+        }
 
     );
 
@@ -37,58 +38,29 @@ describe("challenge5 suite", function(){
         element.sendKeys("Porsche");
         var element2 = await driver.findElement(By.xpath("//*[@id=\"search-form\"]/div/div[2]/button"));
 
-            //console.log(element2);
+        //console.log(element2);
         return await element2.click();
-            //var element = await driver.findElement(By.name("q"));
-            // element.sendKeys("Exotic" + Key.ENTER);
 
-            // element.sendKeys("Exotic");
-            //return await driver.findElement(By.className("btn btn-lightblue marginleft15")).click();
-            //return await driver.findElement(By.id('input-search')).sendKeys('Exotic' + Key.ENTER);
-
-
-            //lotsearchLotmake
-        });
+    });
     it("Checks if it user is in search exotic page", async function() {
         var element3 = await driver.getTitle();
-        //  console.log(element3);
+
         return driver.wait(until.titleIs('Porsche For Auction at Copart - Salvage Cars For Sale'), 4000);
-        /*return await driver.getTitle().then(function(title) {
-            assert.equal(title, "Exotic For Auction at Copart - Salvage Cars For Sale");
-        });*/
-        //return await driver.findElement(By.id('input-search')).sendKeys('Exotic' + Key.ENTER);
 
-
-        //lotsearchLotmake
     });
     it("Checks if Porsche is in list", async function() {
-        //return (WebElement)(JavascriptExecutor).executeScript("return document.evaluate('//span[@data-uname=\"lotsearchLotmake\"][text()=\"PORSCHE\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
 
         await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//table[@id="serverSideDataTable"]//tbody'))));
         var html = await driver.findElement(By.id('serverSideDataTable')).getAttribute('innerHTML');
-       // console.log(html);
+        // console.log(html);
         return assert.include(html, 'PORSCHE');
 
-        /* driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        var element = await driver.findElements(By.xpath("//span[@data-uname='lotsearchLotmake']"));
-
-        var element = await driver.findElements(By.xpath("//[text()='PORSCHE']"));
-
-        console.log(element);
-        return element.length > 0; */
-
-        // JavascriptExecutor js = (JavascriptExecutor)webdriver;
-        //return  (String)js.executeScript("return document.evaluate('//span[@data-uname=\"lotsearchLotmake\"][text()=\"PORSCHE\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
     });
 
 
 
     it("It picks 100 from the the show entries list", async function(){
-       // var element3 = await driver.getTitle();
-        //  console.log(element3);
-        //driver.wait(until.titleIs('Porsche For Auction at Copart - Salvage Cars For Sale'), 4000);
-        //*[@id="serverSideDataTable_length"]/label/select
-        //await driver.wait(until.elementIsVisible(driver.findElement(By.xpath('//table[@id="serverSideDataTable"]//tbody'))));
+
         var element = await driver.findElement(By.xpath('//select[@name="serverSideDataTable_length"]'));
         await element.click();
         await element.sendKeys("100");
@@ -99,48 +71,65 @@ describe("challenge5 suite", function(){
     });
 
 
-    /*it("Should check for different models of porsche", async function(){
-        var models_array = await driver.findElements(By.xpath('//span[@data-uname="lotsearchLotmodel"]'));
+    it("Should check for different models of porsche", async function(){
+        var models_array = [];
+        var models_array_nontext = await driver.findElements(By.xpath('//span[@data-uname="lotsearchLotmodel"]'));
+        for(var i = 0; i<models_array_nontext.length;i++){
+            var model = await models_array_nontext[i].getText();
+
+
+            models_array.push(model);
+        }
+        var used_models_array_text = [];
         var models_count = [];
 
-        for(var i = 0; i<models_array.length;i++){
-            var model = await models_array[i].getText();
+        for(var x = 0; x<models_array.length;x++){
+            var counter = 0;
+            var model = models_array[x];
+            var flag = true;
+            if (used_models_array_text === undefined || used_models_array_text.length == 0) {
+                // array empty or does not exist
+            }else {
+                for (var o = 0; o <used_models_array_text.length;o++)
+                {
+                    if (model == used_models_array_text[o]) {
+                        flag = false;
 
-
-            models_count.push(model);
-        }
-        models_count.sort();
-        var current = null;
-        var count = 0;
-        for(var x =0;x< models_count.length;i++){
-            if(models_count[x] != current){
-                if(count > 0){
-                    console.log("The model " + current + " has " + count + "  amount");
+                    }
                 }
-                current = models_count[x];
-                count = 1;
-
-            }else{
-                count++;
             }
+            if(flag) {
+                for (var e = 0; e < models_array.length; e++) {
+                    if (model == models_array[e]) {
+                        counter = counter + 1;
+
+                    }
+                }
+                models_count.push(counter);
+                used_models_array_text.push(model);
+
+            }
+
         }
-        if(count > 0){
-            console.log("there are " + count)
+        for (var a = 0; a < used_models_array_text.length; a++) {
+            console.log("\nThe model " + used_models_array_text[a] + " has " + models_count[a] + "  amount");
+
         }
-        return "";
-    });*/
+    });
+
+
     it("Should print out damage types", async function(){
         var damage_array = await driver.findElements(By.xpath('//span[@data-uname="lotsearchLotdamagedescription"]'))
-        console.log(damage_array);
+
         var rearEndcounter = 0;
         var frontEndcounter = 0;
         var minorDentscratchesCounter = 0;
         var underCarriagecounter = 0;
         var miscCounter = 0;
-        console.log(damage_array.length);
+
         for(var i = 0; i < damage_array.length; i++){
             var damage = await damage_array[i].getText();
-            console.log(damage);
+
             switch(damage){
                 case "REAR END":
                     rearEndcounter++;
