@@ -80,7 +80,7 @@ describe("challenge7 suite", function(){
                     return new Promise(function(resolve, reject) {
                         setTimeout(function() {
                             console.log(x);
-                            console.log(MultiArray[0][1]);
+                           // console.log(MultiArray[0][1]);
                             
                             resolve(MultiArray[x][1]);
                       
