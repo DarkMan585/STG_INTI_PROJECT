@@ -6,12 +6,31 @@ var By = webdriver.By;
 var Key = webdriver.Key;
 //var sleep = require('sleep');
 var popular_array;
-        
+
 var MultiArray;
-
-
-
-describe("challenge7 suite", function(){
+var driverSetup = function (url) {
+    driver2 = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).build();
+    driver2.manage().window().maximize();
+    if (url) {
+        driver2.get(url);
+        return driver2;
+    }
+}
+var navValidation = async function (url, text) {
+    var driver2 = await driverSetup(url);
+    var found = false;
+    await driver2.wait(until.elementLocated(By.tagName("body")), 5000);
+    try {
+        await driver2.wait(until.elementLocated(By.xpath(`//*[contains(text(), "${text}")]`)), 5000);
+        found = true;
+    } catch (err) {
+        console.log(err);
+    } finally {
+        driver2.quit();
+        return found;
+    }
+}
+describe("challenge7 suite", function () {
     this.timeout(1000000);
     var driver;
     before(function () {
@@ -20,128 +39,81 @@ describe("challenge7 suite", function(){
             .withCapabilities(webdriver.Capabilities.chrome())
             .build();
     });
-
-
-
     after(function () {
         //return driver.quit();
     });
-
-    it("I open the copart website", async function() {
+    it("I open the copart website", async function () {
         return await driver.get("http://www.copart.com");
     });
-
-    it("should verify these urls using the displayed text for each URL validation", async function(){
+    it("should verify these urls using the displayed text for each URL validation", async function () {
         var hrefArray = [];
         var popular_array = await driver.findElements(webdriver.By.xpath('//*[@id="tabTrending"]//a'));
-        
-        var MultiArray = new Array(popular_array.length);
-        
-        var validationString; 
 
-        for(var i=0; i<popular_array.length; i++){
-            MultiArray [i] = new Array(2)
+        var MultiArray = new Array(popular_array.length);
+
+        var validationString;
+        for (var i = 0; i < popular_array.length; i++) {
+            MultiArray[i] = new Array(2)
             MultiArray[i][0] = await popular_array[i].getText();
             MultiArray[i][1] = await popular_array[i].getAttribute("href");
             hrefArray[i] = MultiArray[i][1];
-            console.log( MultiArray[i][0]  + " - "+ MultiArray[i][1] );
-            //console.log(hrefArray[i]);
-
+            console.log(MultiArray[i][0] + " - " + MultiArray[i][1]);
         }
-        for(var b=0; b<popular_array.length; b++){
-            await driver.get(MultiArray[b][1]);
-            var superValidation =await driver.wait(function(){
-            return driver.getCurrentUrl().then(function(getUrl){
-                return assert.include(getUrl, MultiArray[b][1]);
-            });
-            if(superValidation){
-                console.log(MultiArray[b][1]+" link is working");
-            }else{
-                console.log(MultiArray[b][1]+" link is not working");
-
-            }
-        });
-    }
-      //  Promise.all(hrefArray).then(values => { 
-      //      console.log(values);   
-      //  Promise.allSettled(hrefArray).then((results) => results.forEach((result) => console.log(result +result.status)));
-            //driver.get("http://www.copart.com") 
-
-         
+        driver.quit;
 
 
+        try {
+            await MultiArray.reduce(async function (chain, task) {
+                return await chain.then(async function () {
+                    return new Promise(async function (resolve, reject) {
+                        console.log(chain, task);
+                        await assert.isTrue(await navValidation(task[0], task[1]), `Looking for "${task[0]}" at "${task[1]}"`);
+                        resolve();
 
-        /*
-        for(var x = 0; x < popular_array.length; x++){
-            //console.log(x);
-            var promise = job1(x);
-        }
-            promise.then(function(data1) {
-                function sleep(ms) {
-                    return new Promise(resolve => setTimeout(resolve, ms,12));
-                  }
-                sleep(15);
-                driver.get(data1);
-                console.log(data1);
-                return job2();
+                    }).catch(error => { console.log("caught", err.message) })
                 })
-
-                .then(function(data2) {
-                    console.log(data2);
-                    var superValidation = assert.include(MultiArray[x][1],data2);        
-                    if(superValidation){
-                        console.log(data2 + " link is working")
-                    }else{
-                        console.log(data2 + " link is not working")
-                    }
-                    return superValidation;
-                    
-                });
-
-                .then(function(data3) {
-                    console.log('data3', data3);
-                }); 
-
-                function job1(x) {
-                    return new Promise(function(resolve, reject) {
-                        setTimeout(function() {
-                            console.log(x);
-                           // console.log(MultiArray[0][1]);
-                            
-                            resolve(MultiArray[x][1]);
-                      
-                        }, 1000);
-                    });
-                }
-
-                function job2() {
-                    return new Promise(async function(resolve, reject) {
-                        var getUrl = await driver.getCurrentUrl();
-                        setTimeout(function() {
-                            resolve(getUrl);
-                            reject(getUrl);
-                        }, 1000);
-                    });
-                }
-                 */           
-
-        
-            
-            var htmlAssert = "";
-          
-           
-       
-           
-        
-        return MultiArray; 
+            }, Promise.resolve());
+        } catch (err) {
+                console.log(err);
+        }
     });
-    
-
-   
-   
+    /*            async function navValidation(url, text){
+        driver2 = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).build();
+        driver2.manage().window().maximize();
+            await driver2.get(url);
+            
+            var found = false;
+            await driver2.wait(until.elementLocated(By.tagName("body")), 5000);
+            try{
+                await driver2.wait(until.elementLocated(By.xpath(`//*[contains(text(), "${text}")]`)), 5000);
+                expect(driver2.getCurrentUrl()).toBe(url);    
+                console.log(text + " link is working ");
+                found = true;
+            } catch (err){
+                console.log(text + " link is not working ");
+        
+            } finally {
+                driver.quit();
+                return found;
+            }
+        }   
+       //not sure what navData and chain is 
+       //task array logic is interesting might not be a multidimensional array
+        
+       //is there an array for navdata 
+        await MultiArray.reduce(async function(chain, task){
+            return await chain.then(async function(){
+                return new Promise(async function(resolve, reject){
+                    console.log(chain, task);
+                    await assert.isTrue(await navValidation(task[0], task[1]));
+                    resolve();//could resolve be inside navade validation
+                })
+            })
+        }, Promise.resolve());
+    });            
+*/
 });
-  
 
 
 
-  
+
